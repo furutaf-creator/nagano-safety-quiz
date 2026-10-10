@@ -31,6 +31,25 @@
     header.app h1{font-size:19px; margin:2px 0 0; font-weight:800; letter-spacing:.01em;}
     header.app .sub{font-size:12.5px; opacity:.95; margin-top:4px;}
     .card{background:var(--card); border:1px solid var(--line); border-radius:18px; padding:18px; box-shadow:0 2px 10px rgba(20,40,80,.04); margin-bottom:14px;}
+    
+    /* 景品目玉バナー用スタイル */
+    .prize-banner{
+      background:linear-gradient(135deg, #f59e0b, #ef4444);
+      color:#fff; border-radius:16px; padding:16px; text-align:center;
+      box-shadow:0 4px 14px rgba(245,158,11,.35); margin-bottom:14px;
+      border:2px solid #fbbf24;
+    }
+    .prize-banner .badge{
+      display:inline-block; background:#fff; color:#d97706; font-size:12px;
+      font-weight:900; padding:3px 10px; border-radius:999px; letter-spacing:.03em;
+    }
+    .prize-banner h3{
+      font-size:22px; font-weight:900; margin:6px 0 2px; line-height:1.2; letter-spacing:.02em;
+    }
+    .prize-banner .sub-txt{
+      font-size:13px; font-weight:700; opacity:.95; margin:0;
+    }
+
     h2{font-size:18px; margin:2px 0 10px; font-weight:800;}
     p.lead{color:var(--muted); font-size:14px; margin:0 0 14px;}
     .btn{
@@ -134,8 +153,8 @@
    設定
    ============================================================ */
 const CONFIG = {
-  prizeThreshold: 6,
-  topPrize:        "オリジナル安全グッズ（全問正解）",
+  prizeThreshold: 7, // 7問全問正解で特別賞
+  topPrize:        "Google Home Mini（全問正解）",
   topPrizeEmoji:   "🎁",
   partPrize:       "オリジナルノベルティ（参加賞）",
   partPrizeEmoji:  "✨",
@@ -150,7 +169,7 @@ const CONFIG = {
     ]
   },
   submitUrl: "",
-  storeKey: "nagano_safety_quiz_v7",
+  storeKey: "nagano_safety_quiz_v8",
   adminPin: ""
 };
 
@@ -196,7 +215,7 @@ const QUIZ_DATA = {
       {q:"長野県内で急増する『ニセ警察官詐欺』。「あなたの口座が犯罪に使われた。全額指定口座へ送金しろ」と言われた際の正しい対応は？",
        choices:["指定された『安全な口座』へ送金する","一度切り、警察相談専用電話（#9110）や地元警察署の公式番号に確認する","LINEで送られてきた警察手帳の画像を見る"], answer:1,
        explain:"警察官が電話やSNSで資産の送金を指示することは100%ありません！SNSで送られてくる警察手帳や逮捕状の画像もすべて偽物です。（参照：警察庁「SOS47 ニセ警察官詐欺注意喚起」・『安全のしおりVol.4 第3章』P.47）"},
-      {q:"AI（生成AI）を悪用した最新の詐欺手口。「本物そっくりの偽WEBサイト」に誘い込まれた際、被害を防ぐ決定的なチェックポイントは？",
+      {q:"AI（生成AI）を悪用した最新の詐欺手口。「本物そっくり偽WEBサイト」に誘い込まれた際、被害を防ぐ決定的なチェックポイントは？",
        choices:["画面デザインが本物っぽいか確かめる","ブラウザの「URL（ドメイン名）」を確認し、ブックマークからアクセスする","「タイムセール中」の表示を信じる"], answer:1,
        explain:"AIによりロゴやデザインは完璧に模倣されます。アクセス先のURL（ドメイン名）の確認や、公式アプリ・ブックマークからの直接アクセスが鉄則です。（参照：NBSニュース「生成AIで防ぐ新技術」・『安全のしおりVol.4 第3章』P.35）"},
       {q:"大雪や地震による停電からの復旧時、倒れた暖房器具等から発生する『通電火災』を防ぐ避難時の鉄則は？",
@@ -320,11 +339,18 @@ function render(){
 
 function renderHome(){
   app.innerHTML = `
+    <!-- 目玉景品バナー -->
+    <div class="prize-banner">
+      <span class="badge">🎁 全問正解チャレンジ</span>
+      <h3>全問正解で<br>Google Home Mini プレゼント！</h3>
+      <p class="sub-txt">全7問に正解して特別景品をGETしよう！（※参加賞もあります）</p>
+    </div>
+
     <div class="card">
       <h2>ようこそ！🎉</h2>
       <p class="lead">楽しく学んで、自分と大切な人を守ろう！全${QUIZ_DATA.safety.easy.length}問のデジタル安全クイズに答えて景品をゲットしよう。</p>
       <button class="btn lg green" data-action="toCategory"><span class="emj">▶️</span><span class="col">クイズをはじめる<span class="meta">所要時間 約5分 ｜ 参加無料</span></span></button>
-      <div class="note" style="margin-top:12px;">🎁 参加者プレゼント：全問正解を目指そう！参加してくれた方全員にオリジナルグッズをお渡しします（※なくなり次第終了）。</div>
+      <div class="note" style="margin-top:12px;">🎁 参加者プレゼント：全問正解でGoogle Home Miniをお渡しします！（※なくなり次第終了／参加賞あり）</div>
     </div>
     <div class="card">
       <h3 style="margin:0 0 8px; font-size:14px;">クイズで学べるテーマ</h3>
@@ -415,7 +441,7 @@ function renderResult(){
         <div class="lab">${isTop?"🎉 全問正解おめでとうございます！":"✨ ご参加ありがとうございます！"}</div>
         <div class="name">${esc(prizeName)}</div>
       </div>
-      <div class="staff">📲 この画面をブースのスタッフにお見せください<br><span style="font-size:13px; font-weight:700; color:var(--muted);">オリジナルグッズとお引換えします</span></div>
+      <div class="staff">📲 この画面をブースのスタッフにお見せください<br><span style="font-size:13px; font-weight:700; color:var(--muted);">景品（Google Home Mini または 参加賞）とお引換えします</span></div>
     </div>
     <div class="card">
       <div class="cta">
@@ -547,7 +573,7 @@ function renderAdmin(){
       ${adminMerged?`<div class="banner">📥 取り込み合算データを表示中（合計 ${data.length}件）。<button class="link" data-action="resetMerge" style="margin-left:6px;">この端末のみに戻す</button></div>`:""}
       <div class="kpis">
         <div class="kpi"><div class="v">${ag.total}</div><div class="k">回答 合計件数</div></div>
-        <div class="kpi"><div class="v">${ag.prize.top||0}</div><div class="k">上位賞（全問正解）</div></div>
+        <div class="kpi"><div class="v">${ag.prize.top||0}</div><div class="k">上位賞（Google Home Mini）</div></div>
         <div class="kpi"><div class="v">${ag.prize.part||0}</div><div class="k">参加賞</div></div>
       </div>
       <div style="margin-top:12px;">
